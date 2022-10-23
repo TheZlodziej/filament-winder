@@ -4,6 +4,11 @@ GCodeParser::GCodeParser(std::istream& stream) :
 	_stream(stream)
 {}
 
+GCodeParser::GCodeParser(std::istream& stream, const GCode_Config& config) :
+	_config(config),
+	_stream(stream)
+{}
+
 std::vector<std::string> GCodeParser::split_line_into_chunks(std::string line) {
 	if (line.back() != _config.chunk_separator) {
 		line += _config.chunk_separator;
@@ -22,7 +27,9 @@ std::vector<std::string> GCodeParser::split_line_into_chunks(std::string line) {
 		}
 
 		if (c == _config.chunk_separator) {
-			splitted.emplace_back(temp);
+			if (!temp.empty()) {
+				splitted.emplace_back(temp);
+			}
 			temp.clear();
 			continue;
 		}
@@ -45,10 +52,15 @@ GCodeParser::GCode_Line GCodeParser::split_chunks_into_gcode_line(const std::vec
 
 	/* args */
 	for (size_t i = 1; i < chunks.size(); i++) {
-		GCode_Argument arg;
+		GCode_Argument arg{};
 		chunk = chunks[i];
 		arg.name = chunk[0];
-		arg.value = std::stof(chunk.substr(1));
+		try {
+			arg.value = std::stof(chunk.substr(1));
+		}
+		catch (const std::invalid_argument&) {
+			arg.value = -1;
+		}
 		args.emplace_back(arg);
 	}
 
@@ -70,6 +82,12 @@ GCodeParser::GCode_Line GCodeParser::read_line() {
 	do {
 		std::getline(_stream, line, _config.new_command_separator);
 	} while (line.size() < 2);
+	
+	std::vector<std::string> chunks(split_line_into_chunks(line));
 
-	return split_chunks_into_gcode_line(split_line_into_chunks(line));
+	if (!chunks.size()) {
+		return read_line();
+	}
+
+	return split_chunks_into_gcode_line(chunks);
 }

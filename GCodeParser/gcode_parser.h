@@ -38,7 +38,8 @@ private:
 	/* constructors */
 public:
 	GCodeParser() = delete;
-	GCodeParser(std::istream& stream);
+	explicit GCodeParser(std::istream& stream);
+	explicit GCodeParser(std::istream& stream, const GCode_Config& config);
 
 	/* methods */
 public:
