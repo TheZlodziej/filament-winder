@@ -1,4 +1,5 @@
 *.exe
-./Test/*
-./vscode/*
-.code-workspace
+Test/*
+vscode/*
+*.code-workspace
+.settings/*
