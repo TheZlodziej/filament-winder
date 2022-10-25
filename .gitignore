@@ -1,0 +1,4 @@
+*.exe
+./Test/*
+./vscode/*
+.code-workspace
