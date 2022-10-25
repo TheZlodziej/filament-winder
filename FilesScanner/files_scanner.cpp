@@ -12,13 +12,12 @@ std::list<std::filesystem::path> FilesScanner::scan_files_in_directory(const std
     return files;
 }
 
-void FilesScanner::filter_files_based_on_extension(std::list<std::filesystem::path>& files,  const std::filesystem::path& extension) {
-    files.erase(
-        std::remove_if(files.begin(), files.end(),
-            [&extension](const std::filesystem::path& fn) {
-                return fn.extension() != extension;
-            }
-        ), 
-        files.end()
+std::list<std::filesystem::path> FilesScanner::filter_files_based_on_extension(const std::list<std::filesystem::path>& files,  const std::filesystem::path& extension) {
+    std::list<std::filesystem::path> ret;
+    std::copy_if(files.begin(), files.end(), std::back_inserter(ret),
+        [&extension](const std::filesystem::path& fn) {
+            return fn.extension() != extension;
+        }
     );
+    return ret;
 }

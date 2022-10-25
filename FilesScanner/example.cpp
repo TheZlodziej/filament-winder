@@ -2,11 +2,11 @@
 #include "files_scanner.hpp"
 
 int main() {
-    std::list<std::filesystem::path> files = FilesScanner::scan_files_in_directory("c:/test_dir/");
-    FilesScanner::filter_files_based_on_extension(files, ".gcode");
+    auto files_in_dir = FilesScanner::scan_files_in_directory("c:/test_dir/");
+    auto gcode_files = FilesScanner::filter_files_based_on_extension(files_in_dir, ".gcode");
 
-    for(const auto& s : files) {
-        std::cout << s << std::endl;
+    for(const auto& f : gcode_files) {
+        std::cout << f << std::endl;
     }
 
     return 0;
