@@ -1,4 +1,4 @@
-#include "gcode_parser.h"
+#include "gcode_parser.hpp"
 
 GCodeParser::GCodeParser(std::istream& stream) :
 	_stream(stream)

@@ -1,7 +1,7 @@
 //#include <fstream>
 //#include <iostream>
 //
-//#include "gcode_parser.h"
+//#include "gcode_parser.hpp"
 //
 //int main() {
 //	std::ifstream file("Temptower_neu..gcode");
@@ -26,7 +26,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "gcode_parser.h"
+#include "gcode_parser.hpp"
 
 int main() {
     std::stringstream ss("G11 X1 Y2 Z3\n"

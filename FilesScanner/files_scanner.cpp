@@ -6,7 +6,9 @@ std::list<std::filesystem::path> FilesScanner::scan_files_in_directory(const std
     std::list<std::filesystem::path> files;
 
     for(const auto& file : std::filesystem::recursive_directory_iterator(directory)) {
-        files.emplace_back(file.path());
+        if(file.is_regular_file()) {
+            files.emplace_back(file.path());
+        }
     }
 
     return files;
