@@ -7,17 +7,15 @@
 #include <string>
 
 class GCodeParser {
+	/* typedefs */
+public:	
+	typedef std::string GCode_Command;
 	/* structs */
 public:
 	struct GCode_Config {
 		char chunk_separator = ' '; /* for G1?X1?Y2?Z3 -> chunk_separator = '?' */
 		char new_command_separator = '\n';
 		char comment = ';';
-	};
-
-	struct GCode_Command {
-		char name; // e.g. G
-		uint16_t value; // e.g. 1
 	};
 
 	struct GCode_Argument {

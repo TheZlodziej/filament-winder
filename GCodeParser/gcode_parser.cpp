@@ -1,5 +1,7 @@
 #include "gcode_parser.hpp"
 
+const GCodeParser::GCode_Command eof_cmd(1, std::char_traits<char>::eof());
+
 GCodeParser::GCodeParser(std::istream& stream) :
 	_stream(stream)
 {}
@@ -42,15 +44,13 @@ std::vector<std::string> GCodeParser::split_line_into_chunks(std::string line) {
 
 GCodeParser::GCode_Line GCodeParser::split_chunks_into_gcode_line(const std::vector<std::string>& chunks)
 {
-	GCode_Command cmd{};
-	std::vector<GCode_Argument> args;
-	std::string chunk = chunks.front();
-
 	/* cmd */
-	cmd.name = chunk[0];
-	cmd.value = std::stoi(chunk.substr(1));
+	GCode_Command cmd = chunks.front();
 
 	/* args */
+	std::vector<GCode_Argument> args;
+	std::string chunk;
+
 	for (size_t i = 1; i < chunks.size(); i++) {
 		GCode_Argument arg{};
 		chunk = chunks[i];
@@ -70,12 +70,12 @@ GCodeParser::GCode_Line GCodeParser::split_chunks_into_gcode_line(const std::vec
 bool GCodeParser::operator>>(GCode_Line& line)
 {
 	line = read_line();
-	return line.cmd.name != std::char_traits<char>::eof();
+	return line.cmd != eof_cmd;
 }
 
 GCodeParser::GCode_Line GCodeParser::read_line() {
 	if (_stream.peek() == std::char_traits<char>::eof()) {
-		return GCode_Line{ GCode_Command { std::char_traits<char>::eof() }, {} };
+		return GCode_Line{ .cmd = eof_cmd };
 	}
 
 	std::string line;

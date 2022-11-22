@@ -10,7 +10,7 @@
 //		GCodeParser parser(file);
 //		GCodeParser::GCode_Line gc_line;
 //		while (parser >> gc_line) {
-//			std::cout << "(" << gc_line.cmd.name << ":" << gc_line.cmd.value << "):\n";
+//			std::cout << "(" << gc_line.cmd << "):\n";
 //			for (auto gc_arg : gc_line.args)
 //			{
 //				std::cout << "\t(" << gc_arg.name << ":" << gc_arg.value << ")\n";
@@ -19,9 +19,6 @@
 //	}
 //	file.close();
 //}
-
-
-
 
 #include <iostream>
 #include <sstream>
@@ -34,13 +31,12 @@ int main() {
         "M11 X Y\n"
         "G1 X32 ;Y21"
     );
-    GCodeParser::GCode_Config config{};
-    config.comment = 'e';
+    GCodeParser::GCode_Config config{ .comment = 'e' };
     GCodeParser parser(ss, config);
 
     GCodeParser::GCode_Line gc_line;
     while (parser >> gc_line) {
-        std::cout << "(" << gc_line.cmd.name << ":" << gc_line.cmd.value << "):\n";
+        std::cout << "(" << gc_line.cmd << "):\n";
         for (auto gc_arg : gc_line.args)
         {
             std::cout << "\t(" << gc_arg.name << ":" << gc_arg.value << ")\n";
