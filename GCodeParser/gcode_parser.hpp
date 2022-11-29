@@ -16,7 +16,6 @@ public:
 public:
 	struct GCode_Config {
 		char chunk_separator = ' '; /* for G1?X1?Y2?Z3 -> chunk_separator = '?' */
-		// char new_command_separator = '\n'; // chyba wywalic
 		char comment = ';';
 		uint16_t max_line_length = 256;
 	};
