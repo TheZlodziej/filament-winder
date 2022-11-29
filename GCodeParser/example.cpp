@@ -20,26 +20,40 @@
 //	file.close();
 //}
 
-#include <iostream>
-#include <sstream>
 
 #include "gcode_parser.hpp"
+#include "fatfs.h"
+
+extern UART_HandleTypeDef huart3;
+
+void send_uart(const std::string& msg) {
+	HAL_UART_Transmit(&huart3, (uint8_t*)msg.c_str(), msg.size(), 100);
+}
 
 int main() {
-    std::stringstream ss("G11 X1 Y2 Z3\n"
-        "G2 X1 Y2; 2138\n"
-        "M11 X Y\n"
-        "G1 X32 ;Y21"
-    );
-    GCodeParser::GCode_Config config{ .comment = 'e' };
-    GCodeParser parser(ss, config);
+    FIL file;
+    f_open(&file, filename.c_str(), FA_READ);
+}
+
+int main() {
+    FIL file;
+    f_open(&file, filename.c_str(), FA_READ);
+
+    GCodeParser::GCode_Config config{ .comment = '#' };
+    GCodeParser parser(file, config);
 
     GCodeParser::GCode_Line gc_line;
     while (parser >> gc_line) {
-        std::cout << "(" << gc_line.cmd << "):\n";
+        send_uart(gc_line.cmd + ":\t");
         for (auto gc_arg : gc_line.args)
         {
-            std::cout << "\t(" << gc_arg.name << ":" << gc_arg.value << ")\n";
+            std::string arg_msg = "(";
+            arg_msg += gc_arg.name;
+            arg_msg += ":"
+            arg_msg += std::to_string(gc_arg.value);
+            arg_msg += ")\r\n";
         }
     }
+
+    f_close(&file);
 }

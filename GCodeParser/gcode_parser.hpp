@@ -2,9 +2,11 @@
 #ifndef __GCODE_PARSER__
 #define __GCODE_PARSER__
 
-#include <istream>
 #include <vector>
 #include <string>
+#include <cstdint>
+
+#include "fatfs.h"
 
 class GCodeParser {
 	/* typedefs */
@@ -14,8 +16,9 @@ public:
 public:
 	struct GCode_Config {
 		char chunk_separator = ' '; /* for G1?X1?Y2?Z3 -> chunk_separator = '?' */
-		char new_command_separator = '\n';
+		// char new_command_separator = '\n'; // chyba wywalic
 		char comment = ';';
+		uint16_t max_line_length = 256;
 	};
 
 	struct GCode_Argument {
@@ -30,14 +33,14 @@ public:
 
 	/* variables */
 private:
-	GCode_Config _config;
-	std::istream& _stream;
+	const GCode_Config _config;
+	FIL* _stream;
 
 	/* constructors */
 public:
 	GCodeParser() = delete;
-	explicit GCodeParser(std::istream& stream);
-	explicit GCodeParser(std::istream& stream, const GCode_Config& config);
+	explicit GCodeParser(FIL& stream);
+	explicit GCodeParser(FIL& stream, const GCode_Config& config);
 
 	/* methods */
 public:

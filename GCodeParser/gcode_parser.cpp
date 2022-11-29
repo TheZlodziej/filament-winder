@@ -1,14 +1,15 @@
 #include "gcode_parser.hpp"
+#include <stdexcept>
 
 const GCodeParser::GCode_Command eof_cmd(1, std::char_traits<char>::eof());
 
-GCodeParser::GCodeParser(std::istream& stream) :
-	_stream(stream)
+GCodeParser::GCodeParser(FIL& stream) :
+	_stream(&stream)
 {}
 
-GCodeParser::GCodeParser(std::istream& stream, const GCode_Config& config) :
+GCodeParser::GCodeParser(FIL& stream, const GCode_Config& config) :
 	_config(config),
-	_stream(stream)
+	_stream(&stream)
 {}
 
 std::vector<std::string> GCodeParser::split_line_into_chunks(std::string line) {
@@ -74,15 +75,19 @@ bool GCodeParser::operator>>(GCode_Line& line)
 }
 
 GCodeParser::GCode_Line GCodeParser::read_line() {
-	if (_stream.peek() == std::char_traits<char>::eof()) {
+	if (f_eof(_stream)) {
 		return GCode_Line{ .cmd = eof_cmd };
 	}
 
-	std::string line;
+	char buffer[_config.max_line_length];
+	uint8_t chars_read;
+
 	do {
-		std::getline(_stream, line, _config.new_command_separator);
-	} while (line.size() < 2);
+		f_gets(buffer, _config.max_line_length, _stream);
+		chars_read = strlen(buffer);
+	} while (chars_read < 2u);
 	
+	std::string line(buffer, chars_read);
 	std::vector<std::string> chunks(split_line_into_chunks(line));
 
 	if (!chunks.size()) {

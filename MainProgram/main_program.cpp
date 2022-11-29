@@ -10,7 +10,7 @@ MainProgram::MainProgram():
 void MainProgram::run() {
     auto files = FilesScanner::filter_files_based_on_extension(
         FilesScanner::scan_files_in_directory(__FLASH_DIR),
-        "gcode");
+        ".gcode");
 
     // _display.show_files(files);
     std::filesystem::path& chosen = files.front(); //  _display.get_chosen_file();
@@ -40,7 +40,7 @@ void MainProgram::pause() {
 }
 
 void MainProgram::execute_gcode(const GCodeParser::GCode_Line& line) {
-    if(line.cmd.name == 'G' && line.cmd.value == 1) {
+    if(line.cmd == "G1") {
         // for(const auto& arg : line.args) {
         //     if(arg.name == 'X') {
         //         move_x_to(arg.value);   
